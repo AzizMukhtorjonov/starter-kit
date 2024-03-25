@@ -1,0 +1,18 @@
+{
+  "bail": false,
+  "verbose": true,
+  "moduleFileExtensions": ["js", "ts"],
+  "transform": {
+    "^.+\\.(ts|tsx)$": "ts-jest"
+  },
+  "testEnvironment": "node",
+  "testPathIgnorePatterns": ["/node_modules/", "/build/"],
+  "modulePaths": ["<rootDir>/"],
+  "setupFiles": ["<rootDir>/test/env.ts"],
+  "clearMocks": true,
+  "collectCoverage": true,
+  "rootDir": ".",
+  "globals": {
+    "env_file": ".env.test"
+  }
+}

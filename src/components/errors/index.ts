@@ -29,7 +29,7 @@ abstract class NotFoundHttpException extends HttpException {
 }
 
 export class UserNotFound extends NotFoundHttpException {
-	constructor(params: { id: number | undefined; lang?: Language }) {
+	constructor(params: { id: string | undefined; lang?: Language }) {
 		const msg = {
 			en: `User id: ${params.id} not found`,
 			ru: `User id: ${params.id} not found in russian`,

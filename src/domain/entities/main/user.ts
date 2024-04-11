@@ -1,4 +1,7 @@
 import { BaseEntity, BaseEntityParams } from '../base';
+import { User } from '@prisma/client';
+
+export type UserOutput = Pick<User, 'first_name' | 'last_name' | 'email'> & { id: string };
 
 export class UserEntity extends BaseEntity {
 	private readonly _firstName: string;
@@ -19,5 +22,14 @@ export class UserEntity extends BaseEntity {
 	}
 	get email(): string {
 		return this._email;
+	}
+
+	output(): UserOutput {
+		return {
+			id: this.id,
+			first_name: this.firstName,
+			last_name: this.lastName,
+			email: this.email,
+		};
 	}
 }

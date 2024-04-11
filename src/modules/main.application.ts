@@ -9,9 +9,21 @@ import { InfrastructureModule } from './infrastructure';
 import { FabricModule } from './fabric';
 import { RepositoryModule } from './repository';
 import { ServiceModule } from './service';
+import { UseCaseModule } from './useCase';
+import { PresenterModule } from './presenter';
+import { ControllerModule } from './controller';
 
 @Module({
-	imports: [ConfigModule, InfrastructureModule, FabricModule, RepositoryModule, ServiceModule],
+	imports: [
+		ConfigModule,
+		InfrastructureModule,
+		FabricModule,
+		RepositoryModule,
+		ServiceModule,
+		UseCaseModule,
+		PresenterModule,
+		ControllerModule,
+	],
 	controllers: [],
 	providers: [
 		{

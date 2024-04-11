@@ -10,4 +10,14 @@ export class UserEntity extends BaseEntity {
 		this._lastName = params.lastName;
 		this._email = params.email;
 	}
+
+	get firstName(): string {
+		return this._firstName;
+	}
+	get lastName(): string {
+		return this._lastName;
+	}
+	get email(): string {
+		return this._email;
+	}
 }

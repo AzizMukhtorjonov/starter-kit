@@ -13,4 +13,15 @@ export abstract class BaseEntity {
 		this._createTime = params.createTime;
 		this._updateTime = params.updateTime;
 	}
+
+	get id(): string {
+		return this._id;
+	}
+
+	get createTime(): Date {
+		return this._createTime;
+	}
+	get updateTime(): Date {
+		return this._updateTime;
+	}
 }

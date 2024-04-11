@@ -5,9 +5,13 @@ import { ErrorHandlerInterceptor } from '../components/interceptors/errorHandler
 import { ConfigModule } from './config';
 import { LoggerInterceptor } from '../components/interceptors/logger';
 import { SessionInterceptor } from '../components/interceptors/session';
+import { InfrastructureModule } from './infrastructure';
+import { FabricModule } from './fabric';
+import { RepositoryModule } from './repository';
+import { ServiceModule } from './service';
 
 @Module({
-	imports: [ConfigModule],
+	imports: [ConfigModule, InfrastructureModule, FabricModule, RepositoryModule, ServiceModule],
 	controllers: [],
 	providers: [
 		{

@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Config } from '../config/config';
 import { Environment, LogLevel } from '../config/types';
 import { LoggerService } from '@nestjs/common/services/logger.service';
 import { CustomDate, DateFormat } from './date';
@@ -7,7 +6,7 @@ import { CustomDate, DateFormat } from './date';
 @Injectable()
 export class Logger implements LoggerService {
 	private readonly logger: typeof console;
-	constructor(private readonly config: Config) {
+	constructor(private readonly config: { logLevel: LogLevel; environment?: Environment }) {
 		this.logger = console;
 	}
 
@@ -19,7 +18,7 @@ export class Logger implements LoggerService {
 	}
 
 	info(message: string, ...args: any[]): void {
-		if (this.isEnabled(LogLevel.info)) this.print(this.logger.log, message, args);
+		if (this.isEnabled(LogLevel.info)) this.print(this.logger.info, message, args);
 	}
 	warn(message: string, ...args: any[]): void {
 		if (this.isEnabled(LogLevel.warn)) this.print(this.logger.warn, message, args);
@@ -27,10 +26,6 @@ export class Logger implements LoggerService {
 
 	error(message: string, ...args: any[]): void {
 		if (this.isEnabled(LogLevel.error)) this.print(this.logger.error, message, args);
-	}
-
-	setLogLevels(): void {
-		return;
 	}
 
 	private print(func: (...data: any[]) => void, message: string, args: any[]): void {
@@ -54,8 +49,6 @@ export class Logger implements LoggerService {
 				return [LogLevel.info, LogLevel.error].includes(logLevel);
 			case LogLevel.error:
 				return LogLevel.error === logLevel;
-			default:
-				return false;
 		}
 	}
 }

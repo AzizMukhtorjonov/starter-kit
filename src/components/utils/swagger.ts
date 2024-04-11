@@ -4,9 +4,9 @@ import { Config } from '../config/config';
 
 export class Swagger {
 	private readonly developer = {
-		name: 'Aziz Mukhtorjonov',
-		contact: 'https://t.me/Aziz_ax',
-		email: 'aziz.mukhtorjonov@axtechnology.uz',
+		name: 'Aziz Mukhtorjonov (Handeye)',
+		contact: 'https://t.me/Handeye_Az',
+		email: 'handeye1512@gmail.com',
 	};
 	constructor(private readonly config: Config) {}
 	async init(app: INestApplication): Promise<void> {

@@ -34,4 +34,6 @@ export type DotEnv = {
 	ENVIRONMENT: string;
 
 	LOG_LEVEL: string;
+
+	npm_package_version: string; // gets version from package.json
 };

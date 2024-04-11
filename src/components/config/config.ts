@@ -7,7 +7,7 @@ export class Config {
 	readonly app = {
 		name: 'starter-kit',
 		startTime: new Date(),
-		version: '0.0.1',
+		version: '1.0.0',
 	};
 	readonly db: DbConfig;
 	readonly environment: Environment;
@@ -16,6 +16,8 @@ export class Config {
 
 	constructor() {
 		const env = new Env();
+
+		this.app.version = env.get('npm_package_version') ?? this.app.version;
 
 		this.db = {
 			url: env.getOrThrow('DATABASE_URL'),

@@ -1,1 +1,1 @@
-process.env.env_file = ".env.test";
+process.env.env_file = '.env.test';

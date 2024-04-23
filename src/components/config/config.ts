@@ -15,7 +15,7 @@ export class Config {
 
 		this.app = {
 			name: env.get('npm_package_name') ?? 'app',
-			version: env.get('npm_package_version') ?? 'app',
+			version: env.get('npm_package_version') ?? '1.0.0',
 			startTime: new Date(),
 		};
 

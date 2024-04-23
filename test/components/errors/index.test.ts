@@ -11,7 +11,7 @@ import {
 describe('Errors: ', () => {
 	describe('User Not Found should return correct message: ', () => {
 		it('default', () => {
-			const error = new UserNotFound({ id: 1 });
+			const error = new UserNotFound({ id: '1' });
 			expect(error.message).toBe('User id: 1 not found');
 			expect(error.code === ErrorCodes.UserNotFound);
 		});

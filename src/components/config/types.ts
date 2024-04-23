@@ -12,6 +12,12 @@ export enum LogLevel {
 	error = 'error',
 }
 
+export type AppConfig = {
+	name: string;
+	startTime: Date;
+	version: string;
+};
+
 export type DbConfig = {
 	url: string;
 };
@@ -35,5 +41,6 @@ export type DotEnv = {
 
 	LOG_LEVEL: string;
 
-	npm_package_version: string; // gets version from package.json
+	npm_package_version: string; // package version
+	npm_package_name: string; // package name
 };

@@ -1,14 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { DbConfig, Environment, LogLevel, ServersConfig } from './types';
+import { AppConfig, DbConfig, Environment, LogLevel, ServersConfig } from './types';
 import { Env } from './env';
 
 @Injectable()
 export class Config {
-	readonly app = {
-		name: 'starter-kit',
-		startTime: new Date(),
-		version: '1.0.0',
-	};
+	readonly app: AppConfig;
 	readonly db: DbConfig;
 	readonly environment: Environment;
 	readonly logLevel: LogLevel;
@@ -17,7 +13,11 @@ export class Config {
 	constructor() {
 		const env = new Env();
 
-		this.app.version = env.get('npm_package_version') ?? this.app.version;
+		this.app = {
+			name: env.get('npm_package_name') ?? 'app',
+			version: env.get('npm_package_version') ?? 'app',
+			startTime: new Date(),
+		};
 
 		this.db = {
 			url: env.getOrThrow('DATABASE_URL'),

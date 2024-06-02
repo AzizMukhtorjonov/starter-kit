@@ -19,6 +19,8 @@ export class Swagger {
 			.build();
 
 		const document = SwaggerModule.createDocument(app, apiDocument);
-		SwaggerModule.setup('api', app, document);
+		SwaggerModule.setup('api', app, document, {
+			customSiteTitle: `Swagger: ${this.config.app.name}`,
+		});
 	}
 }

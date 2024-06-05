@@ -3,7 +3,7 @@ import { EnvironmentNotDefined } from 'src/components/errors';
 
 describe('Env', () => {
 	it('Use .env if other env_file is not provided', () => {
-		const originalEnv = process.env;
+		const originalEnv = process.env ?? '.env.test';
 		process.env = {};
 		const env = new Env();
 		expect(env.get('MAIN_APP_HOST')).toBe('localhost');

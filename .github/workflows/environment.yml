@@ -6,10 +6,12 @@ on:
         description: 'Node.js version'
         required: false
         default: 'lts'
+        type: string
       os:
         description: 'Operating System'
         required: false
         default: 'ubuntu-latest'
+        type: string
 
 jobs:
   cache-environment:
@@ -31,16 +33,13 @@ jobs:
           VERSION=$(jq -r '.version' package.json)
           echo "PACKAGE_NAME=$NAME" >> $GITHUB_ENV
           echo "PACKAGE_VERSION=$VERSION" >> $GITHUB_ENV
-        outputs:
-          package-name: $NAME
-          package-version: $VERSION
+      
 
       - name: Set cache key
         id: set-cache-key
         run: |
           echo "cache-key=${{ runner.os }}-${{ inputs.node-version }}-${{ inputs.cache-key }}-${{ env.PACKAGE_NAME }}-${{ env.PACKAGE_VERSION }}" >> $GITHUB_ENV
-        outputs:
-          cache-key: ${{ env.cache-key }}
+      
 
       - name: Setup Node.js
         uses: actions/setup-node@v3

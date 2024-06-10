@@ -1,0 +1,15 @@
+name: Prebuild
+on: push
+jobs:
+  lint:
+    uses: ./.github/workflows/test.yml
+  test:
+    uses: ./.github/workflows/test.yml
+
+  build:
+    needs: cache-environment
+    runs-on: ${{ needs.cache-environment.outputs.os }}
+    steps:
+      - name: Build
+        run: npm run build
+

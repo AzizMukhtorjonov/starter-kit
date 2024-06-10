@@ -3,15 +3,8 @@ on:
   workflow_call:
 jobs:
   test:
-    strategy:
-      matrix:
-        node-version: [${{  }}]
     needs: cache-environment
     runs-on: ${{ needs.cache-environment.outputs.os }}
     steps:
-      - name: Download node_modules
-        uses: actions/download-artifact@v3
-        with:
-          name: node_modules
       - name: Test
         run: npm run test

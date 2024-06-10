@@ -2,6 +2,6 @@ name: Test
 on: push
 jobs:
   lint:
-    uses: ./.github/workflows/utils/lint.yml
+    uses: ./.github/workflows/lint.yml
   test:
-    uses: ./.github/workflows/utils/test.yml
+    uses: ./.github/workflows/test.yml

@@ -60,8 +60,6 @@ jobs:
           scp -r ./* $SERVER_USER@$SERVER_HOST:/home/server/starter-kit
 
       - name: Deploy on Server
-        with:
-          env: ${{ env }}
         run: |
           ssh -t $SERVER_USER@$SERVER_HOST << 'EOF'
             cd /home/server/starter-kit

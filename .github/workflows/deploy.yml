@@ -43,16 +43,20 @@ jobs:
           mkdir -p ~/.ssh
           echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
 
+      - name: Create directory on server
+        run: |
+          ssh -t $SERVER_USER@$SERVER_HOST "mkdir -p /home/server/starter-kit"
+
+      - name: Copy files to server
+        run: |
+          scp -r ./* $SERVER_USER@$SERVER_HOST:/home/server/starter-kit
+
       - name: Deploy on Server
         run: |
           ssh -t $SERVER_USER@$SERVER_HOST << 'EOF'
-            mkdir -p /home/server/starter-kit
             cd /home/server/starter-kit
-            ls -la
-            scp -r * $SERVER_USER@$SERVER_HOST:/home/server/starter-kit
-            ls -la
-            pwd
-          
+
+            ls -la          
             sh deploy.sh
 
           EOF

@@ -49,8 +49,13 @@ jobs:
 
       - name: Create .env file
         run: |
-            touch .env
-            echo $SECRETS $ENVS > .env
+          touch .env
+          for secret in $(echo '${{ toJSON(secrets) }}' | jq -r 'keys[]'); do
+          echo "$secret='${{ secrets[secret] }}'" >> .env
+          done
+          for var in $(echo '${{ toJSON(vars) }}' | jq -r 'keys[]'); do
+          echo "$var='${{ vars[var] }}'" >> .env
+          done
         shell: bash
         env:
           SECRETS: ${{ toJSON(secrets) }}

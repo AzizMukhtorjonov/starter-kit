@@ -50,11 +50,9 @@ jobs:
             cd /home/server/starter-kit
             scp -r * $SERVER_USER@$SERVER_HOST:/home/server/starter-kit
             export IMAGE_NAME="${DOCKER_USERNAME}/${DOCKER_REPO}:latest" CONTAINER_NAME="$CONTAINER_NAME"
-
-            cd /home/server/starter-kit
-          
+            
+            echo "Docker data: ${DOCKER_USERNAME} & ${DOCKER_REPO}"
             pwd
-            echo "This is my echo. Image name: " $IMAGE_NAME " container name: " $CONTAINER_NAME
           
             sh deploy.sh
 

@@ -61,7 +61,7 @@ jobs:
       - name: Copy files to server
         run: |
           scp -r ./* $SERVER_USER@$SERVER_HOST:/home/server/starter-kit
-          scp .env $SERVER_USER@$SERVER_HOST:/home/server/starter-kit/.env
+          scp .env $SERVER_USER@$SERVER_HOST:/home/server/starter-kit/.env.docker
 
       - name: Deploy on Server
         run: |

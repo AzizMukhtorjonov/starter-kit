@@ -47,13 +47,16 @@ jobs:
         run: |
           ssh -t $SERVER_USER@$SERVER_HOST "mkdir -p /home/server/starter-kit"
 
-      - name: Create .env file
+      - name: Fetch repository secrets and save to .env
         run: |
-          echo "CONTAINER_NAME=${CONTAINER_NAME}" >> .env
-          echo "SSH_PRIVATE_KEY=${SSH_PRIVATE_KEY}" >> .env
-          for secret in $(env | grep -E "^[A-Z0-9_]+=" | cut -d= -f1 | grep -v SSH_PRIVATE_KEY); do
-            echo "$secret=${{ secrets[secret] }}" >> .env
-          done
+          curl -sSL \
+            -H "Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }}/actions/secrets | \
+            jq -r '.secrets[] | "\(.name)=\(.value)"' > .env
+        env:
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
 
       - name: Copy files to server
         run: |

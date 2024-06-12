@@ -13,6 +13,7 @@ env:
 
 jobs:
   build-and-deploy:
+    environment: Test
     runs-on: ubuntu-latest
 
     steps:
@@ -55,7 +56,7 @@ jobs:
 
       - name: Deploy
         run: |
-          ssh $SERVER_USER@$SERVER_HOST << 'EOF'
+          ssh -tt $SERVER_USER@$SERVER_HOST << 'EOF'
             IMAGE_NAME=$DOCKER_USERNAME/$DOCKER_REPO:latest
             CONTAINER_NAME=$CONTAINER_NAME
           

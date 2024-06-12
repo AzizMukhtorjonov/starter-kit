@@ -4,16 +4,16 @@ on:
   push
 
 env:
-  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
-  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  SERVER_USER: ${{ secrets.SERVER_USER }}
-  SERVER_HOST: ${{ secrets.SERVER_HOST }}
+  DOCKER_USERNAME: ${{ secrets.Test.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.Test.DOCKER_PASSWORD }}
+  DOCKER_REPO: ${{ secrets.Test.DOCKER_REPO }}
+  SSH_PRIVATE_KEY: ${{ secrets.Test.SSH_PRIVATE_KEY }}
+  SERVER_USER: ${{ secrets.Test.SERVER_USER }}
+  SERVER_HOST: ${{ secrets.Test.SERVER_HOST }}
+  KNOWN_HOSTS: ${{ secrets.Test.KNOWN_HOSTS }}
 
 jobs:
   build-and-deploy:
-    environment: Test
     runs-on: ubuntu-latest
 
     steps:
@@ -39,12 +39,12 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ secrets.Test.DOCKER_USERNAME }}
+          password: ${{ secrets.Test.DOCKER_PASSWORD }}
 
       - name: Build and push Docker image
         run: |
-          docker buildx build --push --tag $DOCKER_USERNAME/$DOCKER_REPO:latest .
+          docker buildx build --push --tag $DOCKER_USERNAME/$DOCKER_REPO:$CONTAINER_NAME:latest .
 
       - name: Log out from Docker Hub
         run: docker logout
@@ -54,21 +54,26 @@ jobs:
         with:
           ssh-private-key: ${{ env.SSH_PRIVATE_KEY }}
 
+      - name: Add server to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+
       - name: Deploy
         run: |
-          ssh -tt $SERVER_USER@$SERVER_HOST << 'EOF'
+          ssh $SERVER_USER@$SERVER_HOST << 'EOF'
             IMAGE_NAME=$DOCKER_USERNAME/$DOCKER_REPO:latest
             CONTAINER_NAME=$CONTAINER_NAME
-          
+
             cd /home/server/
-          
+
             # Pull the latest image
             docker pull $IMAGE_NAME
-          
+
             # Stop and remove the old container if it exists
             docker stop $CONTAINER_NAME || true
             docker rm $CONTAINER_NAME || true
-          
+
             # Run the new container
             docker run -d --name $CONTAINER_NAME $IMAGE_NAME
           EOF

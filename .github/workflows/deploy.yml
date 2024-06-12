@@ -27,7 +27,7 @@ jobs:
       - name: Read package.json for container name
         id: read-package
         run: |
-          echo ::set-output name=container_name::$(node -e "console.log(require('./package.json').dockerContainerName)")
+          echo ::set-output name=container_name::$(node -e "console.log(require('./package.json').name)")
 
       - name: Set container name
         run: echo "CONTAINER_NAME=${{ steps.read-package.outputs.container_name }}" >> $GITHUB_ENV

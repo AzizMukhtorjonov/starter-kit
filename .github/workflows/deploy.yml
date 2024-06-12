@@ -4,13 +4,13 @@ on:
   push
 
 env:
-  DOCKER_USERNAME: ${{ secrets.Test.DOCKER_USERNAME }}
-  DOCKER_PASSWORD: ${{ secrets.Test.DOCKER_PASSWORD }}
-  DOCKER_REPO: ${{ secrets.Test.DOCKER_REPO }}
-  SSH_PRIVATE_KEY: ${{ secrets.Test.SSH_PRIVATE_KEY }}
-  SERVER_USER: ${{ secrets.Test.SERVER_USER }}
-  SERVER_HOST: ${{ secrets.Test.SERVER_HOST }}
-  KNOWN_HOSTS: ${{ secrets.Test.KNOWN_HOSTS }}
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  SERVER_USER: ${{ secrets.SERVER_USER }}
+  SERVER_HOST: ${{ secrets.SERVER_HOST }}
+  KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
 
 jobs:
   build-and-deploy:

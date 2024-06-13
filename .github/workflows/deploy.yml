@@ -55,6 +55,8 @@ jobs:
             echo "Key: $key, Value: $value"
             echo "$key=\"$value\"" >> .env
             done
+          
+            echo "I have finished loop"
 
 #          for secret in $(echo '${{ toJSON(secrets) }}' | jq -r 'keys[]'); do
 #            value=$(echo "${{ secrets[secret] }}" | sed 's/"/\\"/g')

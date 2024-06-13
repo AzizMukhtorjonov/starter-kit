@@ -45,18 +45,24 @@ jobs:
 
       - name: Create directory on server
         run: |
-          ssh -t $SERVER_USER@$SERVER_HOST "mkdir -p /home/server/starter-kit"
+          ssh -t $SERVER_USER@$SERVER_HOST "rm -rf /home/server/starter-kit && mkdir -p /home/server/starter-kit"
 
       - name: Create .env file
         run: |
             touch .env
-            for secret in $(echo '${{ toJSON(secrets) }}' | jq -r 'keys[]'); do
-            value=$(echo "${{ secrets[secret] }}" | sed 's/"/\\"/g')
-            echo "$secret='$value'" >> .env
+          
+            echo "secrets" | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' | while IFS="=" read -r key value; do
+            echo "Key: $key, Value: $value"
+            echo "$key=\"$value\"" >> .env
             done
-            for var in $(echo '${{ toJSON(env) }}' | jq -r 'keys[]'); do
-            echo "$var='${{ env[var] }}'" >> .env
-            done
+
+#          for secret in $(echo '${{ toJSON(secrets) }}' | jq -r 'keys[]'); do
+#            value=$(echo "${{ secrets[secret] }}" | sed 's/"/\\"/g')
+#            echo "$secret='$value'" >> .env
+#            done
+#            for var in $(echo '${{ toJSON(env) }}' | jq -r 'keys[]'); do
+#            echo "$var='${{ env[var] }}'" >> .env
+#            done
         shell: bash
         env:
           SECRETS: ${{ toJSON(secrets) }}

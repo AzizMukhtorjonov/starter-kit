@@ -32,7 +32,6 @@ jobs:
             local data="$1"
             local secrets="$2"
             echo $data $secrets
-            done
           }
         
           secrets_from_file=$(cat "$CONFIG_FILE" | jq -r '.secrets')

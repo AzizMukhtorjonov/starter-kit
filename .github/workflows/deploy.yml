@@ -32,8 +32,7 @@ jobs:
             local data="$1"
             local secrets="$2"
             echo "$data" | jq -r 'to_entries[] | "\(.value)=\(.key)"' | while IFS='=' read -r value key; do
-            secret_value=$(jq -r --arg key "$value" '.[$key]' <<< "$secrets")
-            echo "$value=$secret_value"
+            echo "$value=${{ secrets[format('${0}', key)] }}
             done
           }
         

@@ -29,7 +29,7 @@ jobs:
       - name: Create .env file from JSON config
         run: |
           echo "Starting iterating envs"
-          envs=$( cat $CONFIG_FILE ) | jq -r
+          envs=$( cat $CONFIG_FILE )
           for row in $(echo $envs | jq -r '.[]'); do
             echo "${row}"
             echo "${row}" | jq -r "${1}"

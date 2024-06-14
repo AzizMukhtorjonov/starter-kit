@@ -36,10 +36,7 @@ jobs:
         run: |
           for key in $(cat $CONFIG_FILE | jq -r '.secrets | keys[]'); do
             secret_key=$(cat $CONFIG_FILE | jq -r ".secrets[\"$key\"]")
-            secret_value="${{ secrets[${{secret_key}}] }}"
-            if [ -n "$secret_value" ]; then
-              sed -i "s|${key}=.*|${key}=${secret_value}|g" .env
-            fi
+            echo "$key=${{ secrets[secret_key] }}" >> .env
           done
 
       - name: Set up SSH

@@ -35,7 +35,7 @@ jobs:
             export SECRET_KEY=$value
             echo "secret 2: ${{ secrets[format('${0}', env.SECRET_KEY)] }}"
             echo "secret 3: ${{ secrets[format('${0}', 'DATABASE_URL')] }}"
-            echo "key is: $key, value is: $value, secret is: ${{ secrets[format(value)] }}" 
+            echo "key is: $key, value is: $value, secret is: ${{ secrets['DATABASE_URL'] }}" 
             secret_value=$(jq -r --arg key "$value" '.[$key]' <<< "$secrets")
             echo "$value=$secret_value"
             done

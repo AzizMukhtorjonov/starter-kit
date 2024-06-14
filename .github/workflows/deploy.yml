@@ -4,13 +4,11 @@ on:
   push
 
 env:
-  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-  DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   SERVER_USER: ${{ secrets.SERVER_USER }}
   SERVER_HOST: ${{ secrets.SERVER_HOST }}
   KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
+  CONFIG_FILE: "applications/main.json"
 
 jobs:
   build-and-deploy:
@@ -47,35 +45,10 @@ jobs:
         run: |
           ssh -t $SERVER_USER@$SERVER_HOST "rm -rf /home/server/starter-kit && mkdir -p /home/server/starter-kit"
 
-      - name: Create .env file
+      - name: Create .env file from JSON config
         run: |
-          
-          echo ${{ env }}
-          echo ${{ env.all_envs }}
-          
-          echo $secrets
-        
-          cat $SECRETS | jq
-          cat $SECRETS | jq '.DOCKER_USERNAME'
-          result=$(cat $SECRETS | jq)
-        
-          echo result
-          
-
-#            echo "secrets" | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' | while IFS="=" read -r key value; do
-#            echo "Key: $key, Value: $value"
-#            echo "$key=\"$value\"" >> .env
-#            done
-#
-#            echo "I have finished loop"
-
-#          for secret in $(echo '${{ toJSON(secrets) }}' | jq -r 'keys[]'); do
-#            value=$(echo "${{ secrets[secret] }}" | sed 's/"/\\"/g')
-#            echo "$secret='$value'" >> .env
-#            done
-#            for var in $(echo '${{ toJSON(env) }}' | jq -r 'keys[]'); do
-#            echo "$var='${{ env[var] }}'" >> .env
-#            done
+          cat $CONFIG_FILE | jq -r '.envs | to_entries[] | "\(.key)=\(.value)"' > .env
+          cat $CONFIG_FILE | jq -r '.secrets | to_entries[] | "\(.key)=${{ secrets[\(.value)] }}"' >> .env
         shell: bash
 
 

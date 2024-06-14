@@ -33,6 +33,10 @@ jobs:
             local secrets="$2"
             echo "$data" | jq -r 'to_entries[] | "\(.value)=\(.key)"' | while IFS='=' read -r value key; do
             export SECRET_KEY=$value
+            echo "secret 1: ${{ secrets[format('${0}', value)] }}"
+            echo "secret 2: ${{ secrets[format('${0}', env.SECRET_KEY)] }}"
+            echo "secret 3: ${{ secrets[format('${0}', 'DATABASE_URL')] }}"
+            echo "key is: $key, value is: $value, secret is: ${{ secrets[format(value)] }}" 
             secret_value=$(jq -r --arg key "$value" '.[$key]' <<< "$secrets")
             echo "$value=$secret_value"
             done
@@ -44,7 +48,7 @@ jobs:
             jq -r '.envs | to_entries[] | "\(.key)=\(.value)"' "$CONFIG_FILE"
             echo
             echo "# Secrets"
-            process_secrets "$(jq -r '.' <<< "$secrets_from_file")" "$secrets"
+            process_secrets "$(jq -r '.' <<< "$secrets_from_file")" ${{ secrets }}
           
           echo "Created .env file"
 

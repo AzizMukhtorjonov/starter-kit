@@ -28,14 +28,29 @@ jobs:
 
       - name: Create .env file from JSON config
         run: |
-          echo "Starting iterating envs"
-          envs=$( cat $CONFIG_FILE )
-          for row in $(echo $envs | jq -r '.[]'); do
-            echo "${row}"
-            echo "${row}" | jq -r "${1}"
-          done
-          echo "Done iterating envs"
+          function process_secrets {
+            local data="$1"
+            local secrets="$2"
+            echo "$data" | jq -r 'to_entries[] | "\(.value)=\(.key)"' | while IFS='=' read -r value key; do
+            secret_value=$(jq -r --arg key "$value" '.[$key]' <<< "$secrets")
+            echo "$value=$secret_value"
+            done
+          }
         
+          secrets_from_file=$(cat "$CONFIG_FILE" | jq -r '.secrets')
+        
+          {
+            echo "# Environment variables"
+            jq -r '.envs | to_entries[] | "\(.key)=\(.value)"' "$CONFIG_FILE"
+            echo
+            echo "# Secrets"
+            process_secrets "$(jq -r '.' <<< "$secrets_from_file")" "$secrets"
+          } > .env.example
+          
+          echo "Created .env.example file"
+          
+          cat .env
+                
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3

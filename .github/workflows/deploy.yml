@@ -50,8 +50,8 @@ jobs:
       - name: Create .env file
         run: |
           
-          echo $env
-          echo $env.all_envs
+          echo ${{ env }}
+          echo ${{ env.all_envs }}
           
           echo $secrets
         

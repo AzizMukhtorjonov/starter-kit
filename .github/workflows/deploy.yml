@@ -39,12 +39,15 @@ jobs:
         
           secrets_from_file=$(cat "$CONFIG_FILE" | jq -r '.secrets')
         
+          echo $secrets.DATABASE_URL
+          echo "db url: $secrets.DATABASE_URL"
+        
           {
             echo "# Environment variables"
             jq -r '.envs | to_entries[] | "\(.key)=\(.value)"' "$CONFIG_FILE"
             echo
             echo "# Secrets"
-            process_secrets "$(jq -r '.' <<< "$secrets_from_file")" $secrets
+            DATABASE_URL="$secrets.DATABASE_URL"
           } > .env
           
           echo "Created .env file"

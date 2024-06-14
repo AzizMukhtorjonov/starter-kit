@@ -1,4 +1,4 @@
-name: Build, Deploy Docker Image on Server
+name: Build and Deploy Docker Image on Server
 
 on:
   push
@@ -30,15 +30,17 @@ jobs:
         id: create-env
         run: |
           cat $CONFIG_FILE | jq -r '.envs | to_entries[] | "\(.key)=\(.value)"' > .env
-        shell: bash
+          cat $CONFIG_FILE | jq -r '.secrets | to_entries[] | "\(.key)=\(.value)"' >> .env
 
-      - name: Add secrets to .env file
+      - name: Replace secret placeholders with actual values
         run: |
-          for secret in $(cat $CONFIG_FILE | jq -r '.secrets | keys[]'); do
-            secret_value=$(eval echo \${{ secrets[$(cat $CONFIG_FILE | jq -r ".secrets[\"$secret\"]") }} )
-            echo "$secret=$secret_value" >> .env
+          for key in $(cat $CONFIG_FILE | jq -r '.secrets | keys[]'); do
+            secret_key=$(cat $CONFIG_FILE | jq -r ".secrets[\"$key\"]")
+            secret_value="${{ secrets[${{secret_key}}] }}"
+            if [ -n "$secret_value" ]; then
+              sed -i "s|${key}=.*|${key}=${secret_value}|g" .env
+            fi
           done
-        shell: bash
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
@@ -53,7 +55,7 @@ jobs:
       - name: Deploy on Server
         run: |
           ssh -t $SERVER_USER@$SERVER_HOST << 'EOF'
-            rm -rf /home/server/starter-kit && mkdir -p /home/server/starter-kit
+            mkdir -p /home/server/starter-kit
           EOF
           scp -r * $SERVER_USER@$SERVER_HOST:/home/server/starter-kit
           scp .env $SERVER_USER@$SERVER_HOST:/home/server/starter-kit/.env

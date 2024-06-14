@@ -44,12 +44,10 @@ jobs:
             jq -r '.envs | to_entries[] | "\(.key)=\(.value)"' "$CONFIG_FILE"
             echo
             echo "# Secrets"
-            process_secrets "$(jq -r '.' <<< "$secrets_from_file")" "$secrets"
+            process_secrets "$(jq -r '.' <<< "$secrets_from_file")" $secrets
           } > .env
           
-          echo "Created .env.example file"
-          
-          cat .env
+          echo "Created .env file"
                 
 
       - name: Set up SSH

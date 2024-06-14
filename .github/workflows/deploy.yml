@@ -31,22 +31,18 @@ jobs:
           function process_secrets {
             local data="$1"
             local secrets="$2"
-            echo "$data" | jq -r 'to_entries[] | "\(.value)=\(.key)"' | while IFS='=' read -r value key; do
-            echo "$value=${{ secrets[format('${0}', key)] }}
+            echo $data $secrets
             done
           }
         
           secrets_from_file=$(cat "$CONFIG_FILE" | jq -r '.secrets')
-        
-          echo ${{ secrets.DATABASE_URL }}
-          echo "db url: ${{ secrets.DATABASE_URL }}"
         
           {
             echo "# Environment variables"
             jq -r '.envs | to_entries[] | "\(.key)=\(.value)"' "$CONFIG_FILE"
             echo
             echo "# Secrets"
-            echo DATABASE_URL=${{ secrets.DATABASE_URL }}
+            process_secrets "$(jq -r '.' <<< "$secrets_from_file")" $secrets
           } > .env
           
           echo "Created .env file"

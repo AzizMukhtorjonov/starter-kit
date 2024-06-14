@@ -32,22 +32,25 @@ jobs:
             local data="$1"
             local secrets="$2"
             echo "$data" | jq -r 'to_entries[] | "\(.value)=\(.key)"' | while IFS='=' read -r value key; do
-            echo "key is: $key, value is: $value" 
+            export SECRET_KEY=$key
+            echo "key is: $key, value is: $value, secret is: ${{ secrets[format(env.SECRET_KEY)] }}" 
             secret_value=$(jq -r --arg key "$value" '.[$key]' <<< "$secrets")
             echo "$value=$secret_value"
             done
           }
         
           secrets_from_file=$(cat "$CONFIG_FILE" | jq -r '.secrets')
-        
+
+#          {
             echo "# Environment variables"
             jq -r '.envs | to_entries[] | "\(.key)=\(.value)"' "$CONFIG_FILE"
             echo
             echo "# Secrets"
-            process_secrets "$(jq -r '.' <<< "$secrets_from_file")" $secrets
+            process_secrets "$(jq -r '.' <<< "$secrets_from_file")" ${{ secrets }}
+#          } > .env
           
           echo "Created .env file"
-                
+
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3

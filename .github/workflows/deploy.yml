@@ -45,7 +45,7 @@ jobs:
             echo
             echo "# Secrets"
             process_secrets "$(jq -r '.' <<< "$secrets_from_file")" "$secrets"
-          } > .env.example
+          } > .env
           
           echo "Created .env.example file"
           

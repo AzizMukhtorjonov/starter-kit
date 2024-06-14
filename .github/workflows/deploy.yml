@@ -39,8 +39,8 @@ jobs:
         
           secrets_from_file=$(cat "$CONFIG_FILE" | jq -r '.secrets')
         
-          echo $secrets.DATABASE_URL
-          echo "db url: $secrets.DATABASE_URL"
+          echo ${{ secrets.DATABASE_URL }}
+          echo "db url: ${{ secrets.DATABASE_URL }}"
         
           {
             echo "# Environment variables"

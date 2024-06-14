@@ -34,7 +34,6 @@ jobs:
             echo "$data" | jq -r 'to_entries[] | "\(.value)=\(.key)"' | while IFS='=' read -r value key; do
             export SECRET_KEY="$value"
             secret_value=$(jq -r --arg key "$value" '.[$key]' <<< "$secrets")
-            echo "$value=test"
             done
           }
         
@@ -45,7 +44,7 @@ jobs:
             jq -r '.envs | to_entries[] | "\(.key)=\(.value)"' "$CONFIG_FILE"
             echo
             echo "# Secrets"
-            process_secrets "$(jq -r '.' <<< "$secrets_from_file")" ${{ secrets }}
+            process_secrets "$(jq -r '.' <<< "$secrets_from_file")" $secrets
           } > .env
           echo "Created .env file"
 

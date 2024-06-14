@@ -34,7 +34,7 @@ jobs:
             echo "$data" | jq -r 'to_entries[] | "\(.value)=\(.key)"' | while IFS='=' read -r value key; do
             export SECRET_KEY="$value"
             secret_value=$(jq -r --arg key "$value" '.[$key]' <<< "$secrets")
-            echo "$value=${{ secrets[format(env.SECRET_KEY)] }}"
+            echo "$value=${{ secrets[format('${0}', env.SECRET_KEY)] }}"
             done
           }
         

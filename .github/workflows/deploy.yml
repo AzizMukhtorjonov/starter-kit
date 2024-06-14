@@ -4,6 +4,7 @@ on:
   push
 
 env:
+  all_envs: ${{ secrets }}
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
@@ -50,6 +51,9 @@ jobs:
       - name: Create .env file
         run: |
           
+            echo env
+            echo env.all_envs
+          
             cat $SECRETS | jq
             cat $SECRETS | jq '.DOCKER_USERNAME'
             result=$(cat $SECRETS | jq)
@@ -72,9 +76,6 @@ jobs:
 #            echo "$var='${{ env[var] }}'" >> .env
 #            done
         shell: bash
-        env:
-          SECRETS: ${{ secrets }}
-          ENVS: ${{ vars }}
 
 
       - name: Copy files to server

@@ -33,12 +33,8 @@ jobs:
             local secrets="$2"
             echo "$data" | jq -r 'to_entries[] | "\(.value)=\(.key)"' | while IFS='=' read -r value key; do
             export SECRET_KEY="$value"
-            echo "secret 1: ${{ secrets[format(env.SECRET_KEY)] }}"
-            echo "secret 2: ${{ secrets[format('${0}', env.SECRET_KEY)] }}"
-            echo "secret 3: ${{ secrets[format('${0}', 'DATABASE_URL')] }}"
-            echo "key is: $key, value is: $value, secret is: ${{ secrets['DATABASE_URL'] }}" 
             secret_value=$(jq -r --arg key "$value" '.[$key]' <<< "$secrets")
-            echo "$value=$secret_value"
+            echo "$value=${{ secrets['DATABASE_URL'] }}"
             done
           }
         

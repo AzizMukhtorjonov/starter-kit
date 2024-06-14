@@ -5,7 +5,8 @@
   "APP_PORT": 1512,
   "envs": {
     "ENVIRONMENT": "testing",
-    "LOG_LEVEL": "info"
+    "LOG_LEVEL": "info",
+    "TEST_ENV": "1"
   },
   "secrets": {
     "DATABASE_URL": "DATABASE_URL",

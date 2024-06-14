@@ -27,15 +27,21 @@ jobs:
           node-version: "22"
 
       - name: Create .env file from JSON config
-        id: create-env
         run: |
-          cat $CONFIG_FILE | jq -r '.envs | to_entries[] | "\(.key)=\(.value)"' > .env
-          cat $CONFIG_FILE | jq -r '.secrets | to_entries[] | "\(.key)=\(.value)"' >> .env
+          envs=$( cat $CONFIG_FILE )
+          for row in $(echo $envs | jq -r '.[]'); do
+          _jq() {
+            echo "${row}"
+            echo "${row}" | jq -r "${1}"
+          }        
+          done
+          
 
       - name: Replace secret placeholders with actual values
         run: |
           for key in $(cat $CONFIG_FILE | jq -r '.secrets | keys[]'); do
             secret_key=$(cat $CONFIG_FILE | jq -r ".secrets[\"$key\"]")
+            secret
             echo "$key=${{ secrets[secret_key] }}" >> .env
           done
 

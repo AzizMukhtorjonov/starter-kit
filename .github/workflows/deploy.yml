@@ -4,7 +4,6 @@ on:
   push
 
 env:
-  all_envs: ${{ secrets }}
   DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
@@ -51,14 +50,16 @@ jobs:
       - name: Create .env file
         run: |
           
-            echo env
-            echo env.all_envs
+          echo env
+          echo env.all_envs
           
-            cat $SECRETS | jq
-            cat $SECRETS | jq '.DOCKER_USERNAME'
-            result=$(cat $SECRETS | jq)
-          
-            echo result
+          echo $secrets
+        
+          cat $SECRETS | jq
+          cat $SECRETS | jq '.DOCKER_USERNAME'
+          result=$(cat $SECRETS | jq)
+        
+          echo result
           
 
 #            echo "secrets" | jq -r 'to_entries|map("\(.key)=\(.value|tostring)")|.[]' | while IFS="=" read -r key value; do

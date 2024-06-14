@@ -26,10 +26,19 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Read package.json for container name
-        id: read-package
+      - name: Create .env file from JSON config
+        id: create-env
         run: |
-          echo ::set-output name=container_name::$(node -e "console.log(require('./package.json').name)")
+          cat $CONFIG_FILE | jq -r '.envs | to_entries[] | "\(.key)=\(.value)"' > .env
+        shell: bash
+
+      - name: Add secrets to .env file
+        run: |
+          for secret in $(cat $CONFIG_FILE | jq -r '.secrets | keys[]'); do
+            secret_value=$(eval echo \${{ secrets[$(cat $CONFIG_FILE | jq -r ".secrets[\"$secret\"]") }} )
+            echo "$secret=$secret_value" >> .env
+          done
+        shell: bash
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
@@ -41,30 +50,16 @@ jobs:
           mkdir -p ~/.ssh
           echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
 
-      - name: Create directory on server
-        run: |
-          ssh -t $SERVER_USER@$SERVER_HOST "rm -rf /home/server/starter-kit && mkdir -p /home/server/starter-kit"
-
-      - name: Create .env file from JSON config
-        run: |
-          cat $CONFIG_FILE | jq -r '.envs | to_entries[] | "\(.key)=\(.value)"' > .env
-          cat $CONFIG_FILE | jq -r '.secrets | to_entries[] | "\(.key)=${{ secrets[\(.value)] }}"' >> .env
-        shell: bash
-
-
-      - name: Copy files to server
-        run: |
-          scp -r ./* $SERVER_USER@$SERVER_HOST:/home/server/starter-kit
-          scp .env $SERVER_USER@$SERVER_HOST:/home/server/starter-kit/.env.docker
-
       - name: Deploy on Server
         run: |
           ssh -t $SERVER_USER@$SERVER_HOST << 'EOF'
+            rm -rf /home/server/starter-kit && mkdir -p /home/server/starter-kit
+          EOF
+          scp -r * $SERVER_USER@$SERVER_HOST:/home/server/starter-kit
+          scp .env $SERVER_USER@$SERVER_HOST:/home/server/starter-kit/.env
+          ssh -t $SERVER_USER@$SERVER_HOST << 'EOF'
             cd /home/server/starter-kit
-          
-            
-
-            ls -la          
+            pwd
+            echo "Starting deployment process..."
             sh deploy.sh
-
           EOF

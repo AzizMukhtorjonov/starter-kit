@@ -73,8 +73,8 @@ jobs:
 #            done
         shell: bash
         env:
-          SECRETS: $secrets
-          ENVS: $vars
+          SECRETS: ${{ secrets }}
+          ENVS: ${{ vars }}
 
 
       - name: Copy files to server

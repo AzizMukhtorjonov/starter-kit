@@ -28,13 +28,13 @@ jobs:
 
       - name: Create .env file from JSON config
         run: |
+          echo "Starting iterating envs"
           envs=$( cat $CONFIG_FILE )
           for row in $(echo $envs | jq -r '.[]'); do
-          _jq() {
             echo "${row}"
             echo "${row}" | jq -r "${1}"
-          }        
           done
+          echo "Done iterating envs"
         
 
       - name: Set up SSH

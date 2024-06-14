@@ -35,15 +35,7 @@ jobs:
             echo "${row}" | jq -r "${1}"
           }        
           done
-          
-
-      - name: Replace secret placeholders with actual values
-        run: |
-          for key in $(cat $CONFIG_FILE | jq -r '.secrets | keys[]'); do
-            secret_key=$(cat $CONFIG_FILE | jq -r ".secrets[\"$key\"]")
-            secret
-            echo "$key=${{ secrets[secret_key] }}" >> .env
-          done
+        
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3

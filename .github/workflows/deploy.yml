@@ -47,7 +47,7 @@ jobs:
             jq -r '.envs | to_entries[] | "\(.key)=\(.value)"' "$CONFIG_FILE"
             echo
             echo "# Secrets"
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            echo DATABASE_URL=${{ secrets.DATABASE_URL }}
           } > .env
           
           echo "Created .env file"

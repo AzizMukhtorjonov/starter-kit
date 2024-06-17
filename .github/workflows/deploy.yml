@@ -8,7 +8,6 @@ env:
   SERVER_USER: ${{ secrets.SERVER_USER }}
   SERVER_HOST: ${{ secrets.SERVER_HOST }}
   KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
-  ENVS: ${{ secrets.ENVS }}
 
 jobs:
   build-and-deploy:
@@ -28,7 +27,9 @@ jobs:
 
       - name: Create .env file from JSON config
         run: |
-          echo ${{ env.ENVS }} > .env
+          {
+            echo ${{ secrets['ENVS'] }}
+          } > .env
           echo "Created .env file"
 
 
@@ -48,7 +49,7 @@ jobs:
             mkdir -p /home/server/starter-kit
           EOF
           scp -r * $SERVER_USER@$SERVER_HOST:/home/server/starter-kit
-          scp .env $SERVER_USER@$SERVER_HOST:/home/server/starter-kit/.env
+          scp .env $SERVER_USER@$SERVER_HOST:/home/server/starter-kit/.env.docker
           ssh -t $SERVER_USER@$SERVER_HOST << 'EOF'
             cd /home/server/starter-kit
             pwd

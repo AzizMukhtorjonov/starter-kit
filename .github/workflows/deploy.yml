@@ -27,9 +27,7 @@ jobs:
 
       - name: Create .env file from JSON config
         run: |
-          {
-            echo ${{ secrets['ENVS'] }}
-          } > .env
+          echo "${{ secrets.ENVS }}" > .env
           echo "Created .env file"
 
 

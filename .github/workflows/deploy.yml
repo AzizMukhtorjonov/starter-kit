@@ -8,7 +8,7 @@ env:
   SERVER_USER: ${{ secrets.SERVER_USER }}
   SERVER_HOST: ${{ secrets.SERVER_HOST }}
   KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
-  CONFIG_FILE: "applications/main.json"
+  ENVS: ${{ secrets.ENVS }}
 
 jobs:
   build-and-deploy:
@@ -28,26 +28,7 @@ jobs:
 
       - name: Create .env file from JSON config
         run: |
-          function process_secrets {
-            local data="$1"
-            local secrets="$2"
-            echo "$data" | jq -r 'to_entries[] | "\(.value)=\(.key)"' | while IFS='=' read -r value key; do
-            export SECRET_KEY="$value"
-            secret_value=$(jq -r --arg key "$value" '.[$key]' <<< "$secrets")
-            echo "secret_value: $secret_value"
-            echo "$value=${{ secrets[format('${0}', 'DATABASE_URL')] }}"
-            done
-          }
-        
-          secrets_from_file=$(cat "$CONFIG_FILE" | jq -r '.secrets')
-
-          {
-            echo "# Environment variables"
-            jq -r '.envs | to_entries[] | "\(.key)=\(.value)"' "$CONFIG_FILE"
-            echo
-            echo "# Secrets"
-            process_secrets "$(jq -r '.' <<< "$secrets_from_file")" $secrets
-          } > .env
+          echo ${{ env.ENVS }} > .env
           echo "Created .env file"
 
 

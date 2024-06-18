@@ -52,5 +52,5 @@ jobs:
             echo "Starting deployment process..."
             sh ${{ env.DIRECTORY }}/deploy.sh
           EOF
-        with:
+        env:
           DIRECTORY: "${{ env.DIRECTORY }}/${{ github.repository.name }}"

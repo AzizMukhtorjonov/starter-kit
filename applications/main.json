@@ -1,16 +1,5 @@
 {
   "APP_NAME": "main",
   "NPM_SCRIPT": "start",
-  "ENV_FILE": ".env.docker",
-  "APP_PORT": 1512,
-  "envs": {
-    "ENVIRONMENT": "testing",
-    "LOG_LEVEL": "info",
-    "TEST_ENV": "1"
-  },
-  "secrets": {
-    "DATABASE_URL": "DATABASE_URL",
-    "MAIN_APP_HOST": "MAIN_APP_HOST",
-    "MAIN_APP_PORT": "MAIN_APP_PORT"
-  }
+  "APP_PORT": 1512
 }

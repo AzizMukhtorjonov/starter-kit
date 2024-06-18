@@ -8,6 +8,8 @@ env:
   SERVER_USER: ${{ secrets.SERVER_USER }}
   SERVER_HOST: ${{ secrets.SERVER_HOST }}
   KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
+  DIRECTORY: "${{ env.DIRECTORY }}/${{ github.repository.name }}"
+
 
 jobs:
   build-and-deploy:
@@ -23,19 +25,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "latest"
 
-      - name: Create .env file from JSON config
+      - name: Create .env file
         run: |
-          
-          echo "${{ github }}"
-          echo "${{ github.event }}"
-          echo "${{ github.event.repository }}"
-          echo "${{ github.event.repository.name }}"
-          
           echo "${{ secrets.ENVS }}" > .env
-          echo "Created .env file"
-
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
@@ -50,13 +44,11 @@ jobs:
       - name: Deploy on Server
         run: |
           ssh -t $SERVER_USER@$SERVER_HOST << 'EOF'
-            mkdir -p /home/server/starter-kit
+            echo ${{ env.DIRECTORY }}
+            mkdir -p ${{ env.DIRECTORY }}
           EOF
-          scp -r * $SERVER_USER@$SERVER_HOST:/home/server/starter-kit
-          scp .env $SERVER_USER@$SERVER_HOST:/home/server/starter-kit/.env.docker
+          scp -r * $SERVER_USER@$SERVER_HOST:${{ env.DIRECTORY }}
           ssh -t $SERVER_USER@$SERVER_HOST << 'EOF'
-            cd /home/server/starter-kit
-            pwd
             echo "Starting deployment process..."
-            sh deploy.sh
+            sh ${{ env.DIRECTORY }}/deploy.sh
           EOF

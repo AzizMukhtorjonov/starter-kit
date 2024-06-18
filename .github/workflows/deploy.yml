@@ -53,4 +53,4 @@ jobs:
             sh ${{ env.DIRECTORY }}/deploy.sh
           EOF
         env:
-          DIRECTORY: "${{ env.DIRECTORY }}/starter-kit"
+          DIRECTORY: "${{ env.DIRECTORY }}/starter-kit/${{ github.repository }}"

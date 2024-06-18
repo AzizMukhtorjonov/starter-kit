@@ -8,7 +8,7 @@ env:
   SERVER_USER: ${{ secrets.SERVER_USER }}
   SERVER_HOST: ${{ secrets.SERVER_HOST }}
   KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
-  DIRECTORY: ${{ vars.DIRECTORY }}
+  DIRECTORY: "${{ vars.DIRECTORY }}/${{ github.event.repository.name }}"
 
 
 jobs:
@@ -53,5 +53,3 @@ jobs:
             echo "Starting deployment process..."
             sh ${{ env.DIRECTORY }}/deploy.sh
           EOF
-        env:
-          DIRECTORY: "${{ env.DIRECTORY }}/${{ github.repository.name }}"

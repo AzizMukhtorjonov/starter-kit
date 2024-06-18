@@ -27,6 +27,12 @@ jobs:
 
       - name: Create .env file from JSON config
         run: |
+          
+          echo ${{ github }}
+          echo ${{ github.event }}
+          echo ${{ github.event.repository }}
+          echo ${{ github.event.repository.name }}
+          
           echo "${{ secrets.ENVS }}" > .env
           echo "Created .env file"
 

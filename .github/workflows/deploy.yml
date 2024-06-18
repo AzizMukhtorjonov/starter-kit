@@ -8,7 +8,7 @@ env:
   SERVER_USER: ${{ secrets.SERVER_USER }}
   SERVER_HOST: ${{ secrets.SERVER_HOST }}
   KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
-  DIRECTORY: "${{ env.DIRECTORY }}/${{ github.repository.name }}"
+  DIRECTORY: "${{ vars.DIRECTORY }}/${{ github.repository.name }}"
 
 
 jobs:

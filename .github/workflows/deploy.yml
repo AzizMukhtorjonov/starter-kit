@@ -49,8 +49,9 @@ jobs:
           EOF
           scp -r * $SERVER_USER@$SERVER_HOST:${{ env.DIRECTORY }}
           ssh -t $SERVER_USER@$SERVER_HOST << 'EOF'
+            echo ${{ env.DIRECTORY }}
             echo "Starting deployment process..."
             sh ${{ env.DIRECTORY }}/deploy.sh
           EOF
         env:
-          DIRECTORY: "${{ env.DIRECTORY }}/starter-kit/${{ github.repository }}"
+          DIRECTORY: "${{ env.DIRECTORY }}/${{ github.repository.name }}"

@@ -51,5 +51,8 @@ jobs:
           ssh -t $SERVER_USER@$SERVER_HOST << 'EOF'
             echo ${{ env.DIRECTORY }}
             echo "Starting deployment process..."
+            pwd
+            echo pwd
+            echo ${{ env.DIRECTORY }}
             sh ${{ env.DIRECTORY }}/deploy.sh
           EOF

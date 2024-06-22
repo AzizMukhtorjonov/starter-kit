@@ -3,6 +3,13 @@ name: Build and deploy on server
 on:
   push
 
+env:
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  SERVER_USER: ${{ secrets.SERVER_USER }}
+  SERVER_HOST: ${{ secrets.SERVER_HOST }}
+  KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
+  DIRECTORY: "${{ vars.DIRECTORY }}/${{ github.event.repository.name }}"
+
 jobs:
   checkout-code:
     runs-on: ubuntu-latest
@@ -62,16 +69,20 @@ jobs:
 
       - name: Deploy on Server
         run: |
-          ssh -t ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-            rm -rf ${{ vars.DIRECTORY }} && mkdir -p ${{ vars.DIRECTORY }}
+          DIRECTORY=${{ env.DIRECTORY }}
+          SERVER_USER=${{ secrets.SERVER_USER }}
+          SERVER_HOST=${{ secrets.SERVER_HOST }}
+
+          echo $DIRECTORY
+          ssh -t $SERVER_USER@$SERVER_HOST << EOF
+            rm -rf $DIRECTORY && mkdir -p $DIRECTORY
           EOF
-          scp -r * ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ vars.DIRECTORY }}
-          scp .env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ vars.DIRECTORY }}/.env
-          ssh -t ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
-            echo "Starting application..."
-            sh "${{ vars.DIRECTORY }}/deploy.sh"
-            echo "Application started"
-            echo "Deleting directory"
-            rm -rf ${{ vars.DIRECTORY }}
-            echo "Directory deleted"
+          scp -r * $SERVER_USER@$SERVER_HOST:$DIRECTORY
+          scp .env $SERVER_USER@$SERVER_HOST:$DIRECTORY/.env
+          ssh -t $SERVER_USER@$SERVER_HOST << EOF
+            echo "Starting deployment process..."
+            cd $DIRECTORY
+            sh deploy.sh
+            echo "Deployment successful, cleaning up directory..."
+            rm -rf $DIRECTORY
           EOF

@@ -1,4 +1,4 @@
-name: Build and Deploy Docker Image on Server
+name: Build and deploy on server
 
 on:
   push
@@ -10,10 +10,8 @@ env:
   KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
   DIRECTORY: "${{ vars.DIRECTORY }}/${{ github.event.repository.name }}"
 
-
 jobs:
-  build-and-deploy:
-    environment: Test
+  checkout-code:
     runs-on: ubuntu-latest
 
     steps:
@@ -31,6 +29,23 @@ jobs:
         run: |
           echo "${{ secrets.ENVS }}" > .env
 
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: source-code
+          path: .
+
+  setup-ssh:
+    runs-on: ubuntu-latest
+    needs: checkout-code
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: source-code
+          path: .
+
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
@@ -41,6 +56,17 @@ jobs:
           mkdir -p ~/.ssh
           echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
 
+  deploy-on-server:
+    runs-on: ubuntu-latest
+    needs: setup-ssh
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: source-code
+          path: .
+
       - name: Deploy on Server
         run: |
           echo ${{ env.DIRECTORY }}
@@ -50,11 +76,10 @@ jobs:
           scp -r * $SERVER_USER@$SERVER_HOST:${{ env.DIRECTORY }}
           scp .env $SERVER_USER@$SERVER_HOST:${{ env.DIRECTORY }}/.env
           ssh -t $SERVER_USER@$SERVER_HOST << 'EOF'
-            echo ${{ env.DIRECTORY }}
-            echo "Starting deployment process..."
-            pwd
-            echo ${{ env.DIRECTORY }}
-            cd ${{ env.DIRECTORY }}
-            pwd
-            sh deploy.sh
+            echo "Starting application..."
+            sh "${{ env.DIRECTORY }}/deploy.sh"
+            echo "Application started"
+            echo "Deleting directory"
+            rm -rf ${{ env.DIRECTORY }}
+            echo "Directory deleted"
           EOF

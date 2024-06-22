@@ -22,7 +22,6 @@ jobs:
           mkdir -p ~/.ssh
           touch ~/.ssh/known_hosts
           ssh-keyscan ${{secrets.SERVER_HOST}} >> ~/.ssh/known_hosts
-          ssh-add <<< "${{ secrets.SSH_PRIVATE_KEY }}"
 
   deploy-on-server:
     environment: Test

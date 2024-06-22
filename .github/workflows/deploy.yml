@@ -52,6 +52,4 @@ jobs:
             git clone https://github.com/${{ github.repository }} .
             echo "${{ secrets.ENVS }}" > .env
             sh deploy.sh
-            echo "Deployment successful, cleaning up directory..."
-            rm -rf $DIRECTORY
           EOF

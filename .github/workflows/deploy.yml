@@ -49,7 +49,7 @@ jobs:
             fi
             mkdir -p $DIRECTORY
             cd $DIRECTORY
-            git clone --recurse-submodules https://github.com/${{ github.repository }} .
+            git clone --recurse-submodules https://github.com/${{ github.repository }} . 
             echo "${{ secrets.ENVS }}" > .env
             sh deploy.sh
           EOF

@@ -1,4 +1,4 @@
-name: Clone repository and deploy on server
+name: Build and deploy on server
 
 on:
   push
@@ -7,10 +7,42 @@ env:
   DIRECTORY: "${{ vars.DIRECTORY }}/${{ github.event.repository.name }}"
 
 jobs:
-  setup-ssh:
+  checkout-code:
+    environment: Test
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "latest"
+
+      - name: Create .env file
+        run: |
+          echo "${{ secrets.ENVS }}" > .env
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: source-code
+          path: .
+  setup-ssh:
+    environment: Test
+    runs-on: ubuntu-latest
+    needs: checkout-code
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: source-code
+          path: .
+
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
@@ -22,10 +54,17 @@ jobs:
           echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
 
   deploy-on-server:
+    environment: Test
     runs-on: ubuntu-latest
     needs: setup-ssh
 
     steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: source-code
+          path: .
+
       - name: Deploy on Server
         env:
           SERVER_USER: ${{ secrets.SERVER_USER }}
@@ -35,13 +74,13 @@ jobs:
         run: |
           echo $DIRECTORY
           ssh -t $SERVER_USER@$SERVER_HOST << EOF
-            if [ -d "$DIRECTORY" ]; then
-              rm -rf $DIRECTORY
-            fi
-            mkdir -p $DIRECTORY
+            rm -rf $DIRECTORY && mkdir -p $DIRECTORY
+          EOF
+          scp -r * $SERVER_USER@$SERVER_HOST:$DIRECTORY
+          scp .env $SERVER_USER@$SERVER_HOST:$DIRECTORY/.env
+          ssh -t $SERVER_USER@$SERVER_HOST << EOF
+            echo "Starting deployment process..."
             cd $DIRECTORY
-            git clone https://github.com/${{ github.repository }} .
-            echo "${{ secrets.ENVS }}" > .env
             sh deploy.sh
             echo "Deployment successful, cleaning up directory..."
             rm -rf $DIRECTORY

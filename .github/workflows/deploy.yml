@@ -44,6 +44,14 @@ jobs:
       - name: Deploy on Server
         run: |
           ssh -t $SERVER_USER@$SERVER_HOST << EOF
+
+            if ! [ -x "$(command -v git)" ]; then
+              echo 'Git is not installed. Installing...'
+              sudo yum install git -y || sudo apt-get install git -y
+            else
+              echo 'Git is already installed'
+            fi
+          
             if [ -d "$DIRECTORY" ]; then
               rm -rf $DIRECTORY
             fi

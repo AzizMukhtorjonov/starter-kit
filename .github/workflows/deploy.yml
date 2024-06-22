@@ -1,42 +1,48 @@
-name: Clone repository and deploy on server
+name: Build and Deploy Docker Image on Server
 
 on:
   push
 
 env:
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  SERVER_USER: ${{ secrets.SERVER_USER }}
+  SERVER_HOST: ${{ secrets.SERVER_HOST }}
+  KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
   DIRECTORY: "${{ vars.DIRECTORY }}/${{ github.event.repository.name }}"
 
+
 jobs:
-  setup-ssh:
+  build-and-deploy:
     environment: Test
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "latest"
+
+      - name: Create .env file
+        run: |
+          echo "${{ secrets.ENVS }}" > .env
+
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ env.SSH_PRIVATE_KEY }}
 
       - name: Add server to known hosts
         run: |
           mkdir -p ~/.ssh
-          touch ~/.ssh/known_hosts
-          ssh-keyscan ${{secrets.SERVER_HOST}} >> ~/.ssh/known_hosts
+          echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
 
-  deploy-on-server:
-    environment: Test
-    runs-on: ubuntu-latest
-    needs: setup-ssh
-
-    steps:
       - name: Deploy on Server
-        env:
-          SERVER_USER: ${{ secrets.SERVER_USER }}
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          DIRECTORY: ${{ env.DIRECTORY }}
-
         run: |
-          echo $DIRECTORY
           ssh -t $SERVER_USER@$SERVER_HOST << EOF
             if [ -d "$DIRECTORY" ]; then
               rm -rf $DIRECTORY

@@ -10,7 +10,6 @@ env:
   KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
   DIRECTORY: "${{ vars.DIRECTORY }}/${{ github.event.repository.name }}"
 
-
 jobs:
   build-and-deploy:
     environment: Test
@@ -44,14 +43,28 @@ jobs:
       - name: Deploy on Server
         run: |
           ssh -t $SERVER_USER@$SERVER_HOST << EOF
+            # Prepare the directory
             if [ -d "$DIRECTORY" ]; then
               rm -rf $DIRECTORY
             fi
             mkdir -p $DIRECTORY
             cd $DIRECTORY
-            echo ~/.ssh/keys/cloning/id_rsa >> ~/.ssh/authorized_keys
+          
+            # Add SSH key for submodule cloning
+            mkdir -p ~/.ssh/keys/cloning
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/keys/cloning/id_rsa
+            chmod 600 ~/.ssh/keys/cloning/id_rsa
+            echo "IdentityFile ~/.ssh/keys/cloning/id_rsa" >> ~/.ssh/config
+
+            # Add GitHub to known_hosts
             ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+
+            # Clone the repository with submodules
             git clone --recurse-submodules -b cicd https://github.com/${{ github.repository }} .
+
+            # Create .env file
             echo "${{ secrets.ENVS }}" > .env
+
+            # Run deploy script
             sh deploy.sh
           EOF

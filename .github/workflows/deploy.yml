@@ -49,6 +49,7 @@ jobs:
             fi
             mkdir -p $DIRECTORY
             cd $DIRECTORY
+            ssh-add ~/.ssh/keys/cloning/id_rsa
             git clone --recurse-submodules -b cicd https://github.com/${{ github.repository }} .
             echo "${{ secrets.ENVS }}" > .env
             sh deploy.sh

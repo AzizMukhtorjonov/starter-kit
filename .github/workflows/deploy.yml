@@ -4,10 +4,6 @@ on:
   push
 
 env:
-  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  SERVER_USER: ${{ secrets.SERVER_USER }}
-  SERVER_HOST: ${{ secrets.SERVER_HOST }}
-  KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
   DIRECTORY: "${{ vars.DIRECTORY }}/${{ github.event.repository.name }}"
 
 jobs:
@@ -49,12 +45,27 @@ jobs:
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ env.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Add server to known hosts
         run: |
           mkdir -p ~/.ssh
-          echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+
+      - name: Save SSH and environment info
+        run: |
+          echo "${{ secrets.SERVER_USER }}" > server_user
+          echo "${{ secrets.SERVER_HOST }}" > server_host
+          echo "${{ env.DIRECTORY }}" > directory
+
+      - name: Upload SSH and environment info
+        uses: actions/upload-artifact@v3
+        with:
+          name: ssh-info
+          path: |
+            server_user
+            server_host
+            directory
 
   deploy-on-server:
     runs-on: ubuntu-latest
@@ -67,19 +78,28 @@ jobs:
           name: source-code
           path: .
 
+      - name: Download SSH and environment info
+        uses: actions/download-artifact@v3
+        with:
+          name: ssh-info
+          path: .
+
       - name: Deploy on Server
         run: |
-          echo ${{ env.DIRECTORY }}
-          ssh -t $SERVER_USER@$SERVER_HOST << 'EOF'
-            rm -rf ${{ env.DIRECTORY }} && mkdir -p ${{ env.DIRECTORY }}
+          SERVER_USER=$(cat server_user)
+          SERVER_HOST=$(cat server_host)
+          DIRECTORY=$(cat directory)
+
+          echo $DIRECTORY
+          ssh -t $SERVER_USER@$SERVER_HOST << EOF
+            rm -rf $DIRECTORY && mkdir -p $DIRECTORY
           EOF
-          scp -r * $SERVER_USER@$SERVER_HOST:${{ env.DIRECTORY }}
-          scp .env $SERVER_USER@$SERVER_HOST:${{ env.DIRECTORY }}/.env
-          ssh -t $SERVER_USER@$SERVER_HOST << 'EOF'
-            echo "Starting application..."
-            sh "${{ env.DIRECTORY }}/deploy.sh"
-            echo "Application started"
-            echo "Deleting directory"
-            rm -rf ${{ env.DIRECTORY }}
-            echo "Directory deleted"
+          scp -r * $SERVER_USER@$SERVER_HOST:$DIRECTORY
+          scp .env $SERVER_USER@$SERVER_HOST:$DIRECTORY/.env
+          ssh -t $SERVER_USER@$SERVER_HOST << EOF
+            echo "Starting deployment process..."
+            cd $DIRECTORY
+            sh "$DIRECTORY/deploy.sh"
+            echo "Deployment successful, cleaning up directory..."
+            rm -rf $DIRECTORY
           EOF

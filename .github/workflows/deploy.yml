@@ -47,7 +47,7 @@ jobs:
 
             if ! [ -x "$(command -v git)" ]; then
               echo 'Git is not installed. Installing...'
-              sudo yum install git -y || sudo apt-get install git -y
+              yum install git -y || sudo apt-get install git -y
             else
               echo 'Git is already installed'
             fi

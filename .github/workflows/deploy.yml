@@ -3,13 +3,6 @@ name: Build and deploy on server
 on:
   push
 
-env:
-  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  SERVER_USER: ${{ secrets.SERVER_USER }}
-  SERVER_HOST: ${{ secrets.SERVER_HOST }}
-  KNOWN_HOSTS: ${{ secrets.KNOWN_HOSTS }}
-  DIRECTORY: "${{ vars.DIRECTORY }}/${{ github.event.repository.name }}"
-
 jobs:
   checkout-code:
     runs-on: ubuntu-latest
@@ -72,8 +65,8 @@ jobs:
           ssh -t ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
             rm -rf ${{ vars.DIRECTORY }} && mkdir -p ${{ vars.DIRECTORY }}
           EOF
-          scp -r * ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ env.DIRECTORY }}
-          scp .env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ env.DIRECTORY }}/.env
+          scp -r * ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ vars.DIRECTORY }}
+          scp .env ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ vars.DIRECTORY }}/.env
           ssh -t ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'EOF'
             echo "Starting application..."
             sh "${{ vars.DIRECTORY }}/deploy.sh"

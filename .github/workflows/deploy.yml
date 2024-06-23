@@ -50,7 +50,7 @@ jobs:
             mkdir -p $DIRECTORY
             cd $DIRECTORY
           
-            echo ${{ env.SSH_PRIVATE_KEY }} > id_rsa
+            echo "${{ env.SSH_PRIVATE_KEY }}" > id_rsa
           
 
             # Clone the repository with submodules

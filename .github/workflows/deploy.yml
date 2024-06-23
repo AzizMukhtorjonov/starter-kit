@@ -50,6 +50,15 @@ jobs:
             mkdir -p $DIRECTORY
             cd $DIRECTORY
           
+            whoami
+            id
+            cd ~/.ssh
+            pwd
+            cd ~/.ssh/keys
+            pwd
+            cd ~/.ssh/keys/cloning
+            pwd
+          
             echo $SHELL
           
             eval `$(ssh-agent -s)`

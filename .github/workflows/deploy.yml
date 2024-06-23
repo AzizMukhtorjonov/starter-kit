@@ -52,7 +52,9 @@ jobs:
           
             echo $SHELL
           
-            eval `$(ssh-agent)`
+            eval `$(ssh-agent -s)`
+            echo $SSH_AUTH_SOCK
+            echo $SSH_AGENT_PID
             ssh-add /home/github/.ssh/keys/cloning/id_rsa
             # Clone the repository with submodules
             git clone --recurse-submodules -b cicd https://github.com/${{ github.repository }} .

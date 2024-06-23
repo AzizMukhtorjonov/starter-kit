@@ -35,27 +35,18 @@ jobs:
         run: |
           ssh -t $SERVER_USER@$SERVER_HOST << EOF
           
-            ssh-agent
-            ssh-add -L
-          
-            # Prepare the directory
             if [ -d "$DIRECTORY" ]; then
               rm -rf $DIRECTORY
             fi
             mkdir -p $DIRECTORY
             cd $DIRECTORY
-          
-          
 
-            # Clone the repository with submodules
-            git clone -b cicd https://github.com/${{ github.repository }} .
-          
+            git clone -b cicd https://github.com/${{ github.repository }} .          
             git submodule init
             git submodule update
 
-            # Create .env file
             echo "${{ secrets.ENVS }}" > .env
-        
-            # Run deploy script
             sh deploy.sh
+          
+            rm -rf $DIRECTORY
           EOF

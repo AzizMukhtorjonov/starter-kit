@@ -50,6 +50,7 @@ jobs:
             mkdir -p $DIRECTORY
             cd $DIRECTORY
           
+            ssh-add ~/.ssh/keys/cloning/id_rsa
             # Clone the repository with submodules
             git clone --recurse-submodules -b cicd https://github.com/${{ github.repository }} .
 

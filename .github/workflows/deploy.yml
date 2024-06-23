@@ -50,8 +50,8 @@ jobs:
             mkdir -p $DIRECTORY
             cd $DIRECTORY
           
-            ssh-agent -s
-            ssh-add ../../$SERVER_USER/.ssh/keys/cloning/id_rsa
+            eval `ssh-agent -s`
+            ssh-add ${{ secrets.SSH_PRIVATE_KEY }}
 
             # Clone the repository with submodules
             git clone -b cicd https://github.com/${{ github.repository }} .

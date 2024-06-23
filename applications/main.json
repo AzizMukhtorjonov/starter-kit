@@ -1,6 +1,6 @@
 {
   "APP_NAME": "main",
   "NPM_SCRIPT": "start",
-  "ENV_FILE": ".env.docker",
+  "ENV_FILE": ".env",
   "APP_PORT": 1512
 }

@@ -50,19 +50,6 @@ jobs:
             mkdir -p $DIRECTORY
             cd $DIRECTORY
           
-            whoami
-            id
-            cd ~/.ssh
-            pwd
-            cd ~/.ssh/keys
-            pwd
-            cd ~/.ssh/keys/cloning
-            ls -la
-            ssh-add id_rsa 
-            pwd
-          
-            echo $SHELL
-          
             eval `$(ssh-agent -s)`
             echo $SSH_AUTH_SOCK
             echo $SSH_AGENT_PID

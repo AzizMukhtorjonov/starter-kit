@@ -62,6 +62,11 @@ jobs:
 
             # Create .env file
             echo "${{ secrets.ENVS }}" > .env
+          
+            cd ci-cd/
+            git pull
+            
+            cd ../
 
             # Run deploy script
             sh deploy.sh

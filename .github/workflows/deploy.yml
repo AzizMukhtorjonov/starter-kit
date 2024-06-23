@@ -52,9 +52,6 @@ jobs:
           
             eval `ssh-agent -s`
             ssh-add /home/github/.ssh/keys/cloning/id_rsa
-#            echo "$SSH_PRIVATE_KEY" > ~/.ssh/keys/cloning/github_key
-#            chmod 600 ~/.ssh/keys/cloning/github_key
-#            echo "IdentityFile ~/.ssh/keys/cloning/github_key" >> ~/.ssh/config
 
             # Clone the repository with submodules
             git clone -b cicd https://github.com/${{ github.repository }} .

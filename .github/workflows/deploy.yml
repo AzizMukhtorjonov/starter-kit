@@ -57,17 +57,14 @@ jobs:
             echo "$SSH_PRIVATE_KEY" > ~/.ssh/keys/cloning/github_key
             chmod 600 ~/.ssh/keys/cloning/github_key
             echo "IdentityFile ~/.ssh/keys/cloning/github_key" >> ~/.ssh/config
+          
             # Clone the repository with submodules
-            git clone --recurse-submodules -b cicd https://github.com/${{ github.repository }} .
+            git clone -b cicd https://github.com/${{ github.repository }} .
+            git submodule update
 
             # Create .env file
             echo "${{ secrets.ENVS }}" > .env
-          
-            cd ci-cd/
-            git pull
-            
-            cd ../
-
+        
             # Run deploy script
             sh deploy.sh
           EOF

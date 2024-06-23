@@ -50,15 +50,6 @@ jobs:
             mkdir -p $DIRECTORY
             cd $DIRECTORY
           
-            # Add SSH key for submodule cloning
-            mkdir -p ~/.ssh/keys/cloning
-            echo "$SSH_PRIVATE_KEY" > ~/.ssh/keys/cloning/id_rsa
-            chmod 600 ~/.ssh/keys/cloning/id_rsa
-            echo "IdentityFile ~/.ssh/keys/cloning/id_rsa" >> ~/.ssh/config
-
-            # Add GitHub to known_hosts
-            ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-
             # Clone the repository with submodules
             git clone --recurse-submodules -b cicd https://github.com/${{ github.repository }} .
 

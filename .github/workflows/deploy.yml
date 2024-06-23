@@ -58,7 +58,7 @@ jobs:
             chmod 600 ~/.ssh/keys/cloning/github_key
             echo "IdentityFile ~/.ssh/keys/cloning/github_key" >> ~/.ssh/config
             # Clone the repository with submodules
-            git clone --recurse-submodules -b cicd https://github.com/${{ github.repository }} .
+            git clone --recurse-submodules https://github.com/${{ github.repository }} .
 
             # Create .env file
             echo "${{ secrets.ENVS }}" > .env

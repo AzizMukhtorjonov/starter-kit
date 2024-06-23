@@ -50,7 +50,7 @@ jobs:
             mkdir -p $DIRECTORY
             cd $DIRECTORY
           
-            eval `ssh-agent -s`
+            ssh-agent -s
             ssh-add ../../$SERVER_USER/.ssh/keys/cloning/id_rsa
 
             # Clone the repository with submodules

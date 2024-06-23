@@ -57,6 +57,8 @@ jobs:
             cd ~/.ssh/keys
             pwd
             cd ~/.ssh/keys/cloning
+            ll
+            ssh-add id_rsa 
             pwd
           
             echo $SHELL

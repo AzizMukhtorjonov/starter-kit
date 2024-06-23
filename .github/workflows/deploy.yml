@@ -51,7 +51,7 @@ jobs:
             cd $DIRECTORY
           
             eval `ssh-agent -s`
-            ssh-add /home/github/.ssh/keys/cloning/id_rsa
+            ssh-add ../../$SERVER_USER/.ssh/keys/cloning/id_rsa
 
             # Clone the repository with submodules
             git clone -b cicd https://github.com/${{ github.repository }} .

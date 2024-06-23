@@ -55,6 +55,7 @@ jobs:
             # Clone the repository with submodules
             git clone -b cicd https://github.com/${{ github.repository }} .
           
+            eval `ssh-agent -s`
             echo "${{ env.SSH_PRIVATE_KEY }}" > id_rsa
             ssh-add id_rsa
           

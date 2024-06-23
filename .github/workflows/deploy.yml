@@ -50,8 +50,8 @@ jobs:
             mkdir -p $DIRECTORY
             cd $DIRECTORY
           
-            eval `ssh-agent -s`
-            ssh-add /home/github/.ssh/keys/cloning/github_key
+            echo ${{ env.SSH_PRIVATE_KEY }} >> id_rsa
+          
 
             # Clone the repository with submodules
             git clone -b cicd https://github.com/${{ github.repository }} .

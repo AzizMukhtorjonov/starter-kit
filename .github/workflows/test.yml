@@ -48,4 +48,5 @@ jobs:
             echo "${{ secrets.ENVS }}" > .env
             sh deploy.sh
           
+            rm -rf $DIRECTORY
           EOF
